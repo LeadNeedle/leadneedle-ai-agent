@@ -1,7 +1,7 @@
 # backend/app.py
 
 from flask import Flask, request, jsonify
-from sms import send_sms, receive_sms
+from sms import send_sms
 from database import save_lead_data
 from scheduler import book_appointment
 

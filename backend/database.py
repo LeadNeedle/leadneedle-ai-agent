@@ -34,19 +34,27 @@ class Database:
     def close_connection(self):
         self.conn.close()
 
-# ✅ This is what agent.py expects
+# ✅ Used by agent.py
 def save_lead_responses(lead_phone, responses):
     db = Database("leads.db")
     db.create_table()
 
-    # Optional: Ask for name during qualification or leave blank
     lead_name = "Unknown"
     appointment_date = "TBD"
-
-    # Save the responses as JSON text
     response_text = json.dumps(responses, indent=2)
 
     db.insert_lead(lead_name, lead_phone, response_text, appointment_date)
     db.close_connection()
 
     print(f"✅ Lead data saved to SQLite for {lead_phone}")
+
+# ✅ Used by app.py
+def insert_lead(lead_name, lead_phone, responses, appointment_date):
+    db = Database("leads.db")
+    db.create_table()
+
+    response_text = json.dumps(responses, indent=2)
+    db.insert_lead(lead_name, lead_phone, response_text, appointment_date)
+    db.close_connection()
+
+    print(f"✅ insert_lead saved {lead_name} to DB")

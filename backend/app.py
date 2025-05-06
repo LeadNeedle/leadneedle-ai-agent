@@ -1,21 +1,30 @@
 # backend/app.py
 
-from flask import Flask, request, jsonify
+import os
+from flask import Flask, request, jsonify, render_template
 from sms import send_sms
 from database import insert_lead
 from scheduler import book_appointment
 from agent import AI_Sales_Agent
 
-app = Flask(__name__)
-sales_agent = AI_Sales_Agent()
+# Ensure Flask looks for templates in the correct folder
+app = Flask(__name__, template_folder=os.path.join(os.path.dirname(__file__), 'templates'))
 
+# Homepage route for website
+@app.route('/')
+def homepage():
+    print("Homepage route hit")  # Debug for Render logs
+    return render_template("index.html")
+
+# API route for incoming SMS
 @app.route('/sms', methods=['POST'])
 def receive_sms():
     data = request.get_json()
-    sms_text = data['sms_text']
-    phone = data['phone']
+    sms_text = data.get('sms_text')
+    phone = data.get('phone')
 
     # Use AI to get responses
+    sales_agent = AI_Sales_Agent()
     responses = sales_agent.process_sms(sms_text)
 
     # Dummy appointment time for now (could replace with smart scheduling logic)
@@ -32,8 +41,7 @@ def receive_sms():
 
     return jsonify({"status": "success"})
 
+# Run the app
 if __name__ == '__main__':
-    import os
     port = int(os.environ.get("PORT", 10000))
     app.run(host="0.0.0.0", port=port)
-

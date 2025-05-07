@@ -7,11 +7,24 @@
   <link rel="icon" href="/static/favicon.ico">
   <title>Lead Needle</title>
   <script src="https://cdn.tailwindcss.com"></script>
-  <script>tailwind.config = { theme: { extend: { colors: { brand: '#3DDB6C' } } } }</script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            brand: '#3DDB6C'
+          }
+        }
+      }
+    }
+  </script>
 </head>
 <body class="bg-[#0D0D0D] text-white font-sans">
   <header class="bg-black py-4 px-6 flex justify-between items-center shadow-md sticky top-0 z-10">
-    <h1 class="text-2xl font-bold text-brand">Lead Needle</h1>
+    <div class="flex items-center space-x-3">
+      <img src="/static/logo.png" alt="Lead Needle Logo" class="h-10 w-auto">
+      <h1 class="text-2xl font-bold text-brand">Lead Needle</h1>
+    </div>
     <nav class="space-x-4 text-sm">
       <a href='/' class='hover:text-brand'>Home</a>
       <a href='/features' class='hover:text-brand'>Features</a>
@@ -22,11 +35,11 @@
   </header>
   <main class="p-6 max-w-5xl mx-auto">
 
-<section class="text-center py-16">
-  <h2 class="text-4xl font-bold mb-4">Convert Leads on Autopilot</h2>
-  <p class="text-lg mb-6 max-w-xl mx-auto">Lead Needle's AI SMS agents qualify, respond, and book leads for local service businesses — automatically.</p>
-  <a href="/contact" class="bg-brand px-6 py-2 text-black rounded font-semibold hover:opacity-90">Get a Demo</a>
-</section>
+    <section class="text-center py-16">
+      <h2 class="text-4xl font-bold mb-4">Convert Leads on Autopilot</h2>
+      <p class="text-lg mb-6 max-w-xl mx-auto">Lead Needle's AI SMS agents qualify, respond, and book leads for local service businesses — automatically.</p>
+      <a href="/contact" class="bg-brand px-6 py-2 text-black rounded font-semibold hover:opacity-90">Get a Demo</a>
+    </section>
 
   </main>
   <footer class="text-center text-sm py-6 text-gray-400 border-t border-gray-800 mt-8">

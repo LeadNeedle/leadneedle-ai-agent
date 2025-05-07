@@ -19,3 +19,4 @@ A GPT-powered AI agent that:
 - `backend/` – Core logic (agent, SMS, DB, scheduler)
 - `templates/` – Marketing site HTML pages
 - `static/` – Branding assets, styles
+# 🧪 Final GitDoc push test

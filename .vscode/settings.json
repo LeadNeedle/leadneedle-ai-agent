@@ -1,9 +1,0 @@
-{
-  "gitdoc.autoPush": "afterDelay",
-  "gitdoc.autoPushDelay": 30000,
-  "git.enableSmartCommit": true,
-  "git.confirmSync": false,
-  "git.postCommitCommand": "push",
-  "git.showPushSuccessNotification": true,
-  "gitdoc.enabled": true
-}

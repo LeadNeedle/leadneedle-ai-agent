@@ -1,0 +1,6 @@
+{
+  "autoCommit": true,
+  "autoPush": "afterDelay",
+  "autoPushDelay": 30000,
+  "logLevel": "debug"
+}

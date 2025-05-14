@@ -1,30 +1,21 @@
-# backend/app.py
-
 import os
-import sys
 from datetime import datetime, timedelta
 from flask import Flask, request, jsonify, render_template
 
-# Add root to sys.path so we can import from project root
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
-
 from website import website_bp
-from sms import send_sms
-from database import insert_lead
-from scheduler import book_appointment
-from agent import AI_Sales_Agent
+from backend.sms import send_sms
+from backend.database import insert_lead
+from backend.scheduler import book_appointment
+from backend.agent import AI_Sales_Agent
 
-# Create the Flask app
 app = Flask(__name__, template_folder=os.path.join(os.path.dirname(__file__), '..', 'templates'),
             static_folder=os.path.join(os.path.dirname(__file__), '..', 'static'))
 
-# Register website blueprint
 app.register_blueprint(website_bp)
 
 @app.route('/sms', methods=['POST'])
 def receive_sms():
     data = request.get_json()
-
     sms_text = data.get('sms_text')
     phone = data.get('phone')
 
@@ -32,7 +23,7 @@ def receive_sms():
         return jsonify({"error": "Missing phone or sms_text"}), 400
 
     sales_agent = AI_Sales_Agent()
-    responses = sales_agent.process_sms(sms_text)
+    responses = sales_agent.process_sms(phone, sms_text)
 
     start_time = datetime.utcnow() + timedelta(hours=1)
 
@@ -50,7 +41,6 @@ def receive_sms():
     )
 
     send_sms(phone, "✅ Thanks! We’ve saved your info and booked your appointment.")
-
     return jsonify({"status": "success", "responses": responses})
 
 if __name__ == '__main__':

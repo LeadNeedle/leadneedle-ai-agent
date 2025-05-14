@@ -326,7 +326,7 @@
         </div>
     </section>
 
-    
+
 
     <!-- Product Explanation Section -->
     <section id="solutions" class="py-20 bg-darker-bg">
@@ -385,7 +385,7 @@
                     </div>
                 </div>
 
-                
+
             </div>
         </div>
     </section>
@@ -468,7 +468,7 @@
         </div>
     </section>
 
-    
+
 
     <!-- CTA Section -->
     <section id="cta" class="py-20 bg-black">
@@ -491,7 +491,7 @@
                     </a>
                 </div>
 
-                
+
             </div>
         </div>
     </section>
@@ -567,6 +567,7 @@
                     <li><a href="#how-it-works" class="text-gray-400 hover:text-neon-green transition duration-300">How It Works</a></li>
                     <li><a href="#about" class="text-gray-400 hover:text-neon-green transition duration-300">About</a></li>
                     <li><a href="#contact" class="text-gray-400 hover:text-neon-green transition duration-300">Contact</a></li>
+                    <li><a href="/privacy-policy.html" class="text-gray-400 hover:text-neon-green transition duration-300">Privacy Policy</a></li>
                 </ul>
             </div>
         </div>
@@ -583,15 +584,15 @@
     // Header scroll behavior
     let lastScroll = 0;
     const header = document.querySelector('header');
-    
+
     window.addEventListener('scroll', () => {
         const currentScroll = window.pageYOffset;
-        
+
         if (currentScroll <= 0) {
             header.style.transform = 'translateY(0)';
             header.style.opacity = '1';
         }
-        
+
         if (currentScroll > lastScroll && currentScroll > 100) {
             header.style.transform = 'translateY(-100%)';
             header.style.opacity = '0';
@@ -599,7 +600,7 @@
             header.style.transform = 'translateY(0)';
             header.style.opacity = '1';
         }
-        
+
         lastScroll = currentScroll;
     });
 
@@ -620,7 +621,7 @@
     // Mobile menu toggle
     const mobileMenuButton = document.querySelector('button.md\\:hidden');
     const nav = document.querySelector('nav');
-    
+
     if (mobileMenuButton && nav) {
         mobileMenuButton.addEventListener('click', function() {
             const mobileMenu = document.createElement('div');
@@ -643,18 +644,18 @@
                     </div>
                 </div>
             `;
-            
+
             document.body.appendChild(mobileMenu);
             document.body.style.overflow = 'hidden';
-            
+
             const closeButton = mobileMenu.querySelector('button');
             const links = mobileMenu.querySelectorAll('a');
-            
+
             closeButton.addEventListener('click', () => {
                 document.body.removeChild(mobileMenu);
                 document.body.style.overflow = '';
             });
-            
+
             links.forEach(link => {
                 link.addEventListener('click', () => {
                     document.body.removeChild(mobileMenu);

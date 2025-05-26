@@ -126,9 +126,16 @@ def submit_contact_form():
             return redirect(url_for('website_bp.home'))
         
         # Send notification email
-        email_sent = send_notification_email(form_data)
-        if not email_sent:
-            print("Warning: Email notification failed to send")
+       email_sent = send_notification_email(form_data)
+       if email_sent:
+         print("✅ Email notification sent to dylan@leadneedle.com")
+       else:
+         print("❌ Warning: Email notification failed to send")
+
+        # Debug: print submitted form data
+        print("Submitted Form Data:")
+        for key, value in form_data.items():
+            print(f"{key}: {value}")
         
         # Success message
         flash('Thank you for your message! We\'ll get back to you soon.', 'success')

@@ -99,14 +99,14 @@ def submit_contact_form():
             'message': request.form.get('message'),
             'timestamp': datetime.now().strftime('%Y-%m-%d %H:%M:%S')
         }
-        
+
         # Validate required fields
         required_fields = ['firstName', 'lastName', 'email', 'phone', 'service', 'message']
         for field in required_fields:
             if not form_data[field]:
                 flash(f'{field} is required', 'error')
                 return redirect(url_for('website_bp.home'))
-        
+
         # Add to Google Sheets
         try:
             sheet = get_google_sheet()
@@ -124,27 +124,28 @@ def submit_contact_form():
             print(f"Error adding to Google Sheets: {e}")
             flash('There was an error submitting your form. Please try again.', 'error')
             return redirect(url_for('website_bp.home'))
-        
+
         # Send notification email
-       email_sent = send_notification_email(form_data)
-       if email_sent:
-         print("✅ Email notification sent to dylan@leadneedle.com")
-       else:
-         print("❌ Warning: Email notification failed to send")
+        email_sent = send_notification_email(form_data)
+        if email_sent:
+            print("✅ Email notification sent to dylan@leadneedle.com")
+        else:
+            print("❌ Warning: Email notification failed to send")
 
         # Debug: print submitted form data
         print("Submitted Form Data:")
         for key, value in form_data.items():
             print(f"{key}: {value}")
-        
+
         # Success message
         flash('Thank you for your message! We\'ll get back to you soon.', 'success')
         return redirect(url_for('website_bp.home'))
-        
+
     except Exception as e:
         print(f"Error processing form: {e}")
         flash('There was an error submitting your form. Please try again.', 'error')
         return redirect(url_for('website_bp.home'))
+
 
 @app.route('/sms', methods=['POST'])
 def receive_sms():

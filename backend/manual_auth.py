@@ -1,5 +1,6 @@
 import gspread
 import pickle
+import os
 from google_auth_oauthlib.flow import InstalledAppFlow
 from google.auth.transport.requests import Request
 
@@ -20,7 +21,7 @@ def main():
             pickle.dump(creds, token)
 
     client = gspread.authorize(creds)
-    sheet = client.open("Lead Needle Contacts").worksheet("Submissions")
+    sheet = client.open_by_key("1QJ91JGh16v3g8JO4A-YUCLgfhIhADSNppw0NMWjSpP4").worksheet("Submissions")
     sheet.append_row(["Test Auth", "Done"])
 
 if __name__ == '__main__':

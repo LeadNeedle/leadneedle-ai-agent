@@ -22,7 +22,7 @@ app.register_blueprint(website_bp)
 # Google Sheets setup
 def get_google_sheet():
     scope = ['https://spreadsheets.google.com/feeds', 'https://www.googleapis.com/auth/drive']
-    creds = ServiceAccountCredentials.from_json_keyfile_name('backend/credentials.json', scope)
+    creds = ServiceAccountCredentials.from_json_keyfile_name('backend/leadneedle_auth.json', scope)
     client = gspread.authorize(creds)
     sh = client.open("Lead Needle Contacts").worksheet("Submissions")
     return sh

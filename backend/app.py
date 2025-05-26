@@ -22,27 +22,26 @@ app.register_blueprint(website_bp)
 # Google Sheets setup
 def get_google_sheet():
     import pickle
-    from google_auth_oauthlib.flow import InstalledAppFlow
     from google.auth.transport.requests import Request
+    from google.oauth2.credentials import Credentials
 
     SCOPES = ['https://www.googleapis.com/auth/spreadsheets']
-    creds = None
 
-    if os.path.exists('token.pickle'):
-        with open('token.pickle', 'rb') as token:
+    creds = None
+    if os.path.exists('backend/token.pickle'):
+        with open('backend/token.pickle', 'rb') as token:
             creds = pickle.load(token)
 
     if not creds or not creds.valid:
         if creds and creds.expired and creds.refresh_token:
             creds.refresh(Request())
+            with open('backend/token.pickle', 'wb') as token:
+                pickle.dump(creds, token)
         else:
-            flow = InstalledAppFlow.from_client_secrets_file('backend/leadneedle_auth.json', SCOPES)
-            creds = flow.run_local_server(port=0)
-        with open('token.pickle', 'wb') as token:
-            pickle.dump(creds, token)
+            raise Exception("No valid token found. Run manual_auth.py first.")
 
     client = gspread.authorize(creds)
-    return client.open("Lead Needle Contacts").worksheet("Submissions")
+    return client.open_by_key("1QJ91JGh16v3g8JO4A-YUCLgfhIhADSNppw0NMWjSpP4").worksheet("Submissions")
 
 # Email notification function
 def send_notification_email(form_data):

@@ -131,6 +131,10 @@ def handle_form_submission(sheet_name, recipient):
 def submit_contact_form():
     return handle_form_submission("Submissions", "dylan@leadneedle.com")
 
+@app.route('/privacy')
+def redirect_privacy():
+    return redirect('/privacy-policy', code=301)
+
 @app.route('/submit-kim', methods=['POST'])
 def submit_kim_contact_form():
     return handle_form_submission("Kims Fresh Start Leads", "FreshStartCleaningAug@gmail.com")

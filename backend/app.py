@@ -10,14 +10,18 @@ from email.mime.multipart import MIMEMultipart
 
 from dotenv import load_dotenv
 load_dotenv()
+
 from website import website_bp
 from backend.sms import send_sms
 from backend.database import insert_lead
 from backend.scheduler import book_appointment
 from backend.agent import AI_Sales_Agent
 
-app = Flask(__name__, template_folder=os.path.join(os.path.dirname(__file__), '..', 'templates'),
-            static_folder=os.path.join(os.path.dirname(__file__), '..', 'static'))
+app = Flask(
+    __name__,
+    template_folder=os.path.join(os.path.dirname(__file__), '..', 'templates'),
+    static_folder=os.path.join(os.path.dirname(__file__), '..', 'static')
+)
 
 CORS(app, origins=["https://thefreewebsitewizards.com"])
 
@@ -53,6 +57,9 @@ def send_notification_email(form_data, recipient="dylan@leadneedle.com"):
         smtp_port = 587
         sender_email = os.environ.get('SENDER_EMAIL', 'your-email@gmail.com')
         sender_password = os.environ.get('SENDER_PASSWORD', 'your-app-password')
+
+        print("[Notification Email] Using:", sender_email)
+        print("[Notification Email] Password length:", len(sender_password) if sender_password else 0)
 
         msg = MIMEMultipart()
         msg['From'] = sender_email
@@ -94,6 +101,9 @@ def send_confirmation_email(form_data):
         sender_email = os.environ.get('SENDER_EMAIL', 'your-email@gmail.com')
         sender_password = os.environ.get('SENDER_PASSWORD', 'your-app-password')
         recipient_email = form_data['email']
+
+        print("[Confirmation Email] Using:", sender_email)
+        print("[Confirmation Email] Password length:", len(sender_password) if sender_password else 0)
 
         subject = "Your Website Application Has Been Received ✨"
         body = f"""

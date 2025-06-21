@@ -22,7 +22,6 @@ CORS(app, origins=["https://thefreewebsitewizards.com"])
 app.secret_key = os.environ.get('SECRET_KEY', 'your-secret-key-here')
 app.register_blueprint(website_bp)
 
-# Google Sheets setup
 def get_google_sheet(sheet_name="Submissions"):
     import pickle
     from google.auth.transport.requests import Request
@@ -46,7 +45,6 @@ def get_google_sheet(sheet_name="Submissions"):
     client = gspread.authorize(creds)
     return client.open_by_key("1batVITcT526zxkc8Qdf0_AKbORnrLRB7-wHdDKhcm9M").worksheet(sheet_name)
 
-# Email notification function
 def send_notification_email(form_data, recipient="dylan@leadneedle.com"):
     try:
         smtp_server = "smtp.gmail.com"
@@ -64,7 +62,7 @@ def send_notification_email(form_data, recipient="dylan@leadneedle.com"):
 
         Name: {form_data['firstName']} {form_data.get('lastName', '')}
         Email: {form_data['email']}
-        Phone: {form_data['phone']}
+        Phone: {form_data['phoneNumber']}
         Service: {form_data.get('service', 'N/A')}
         Message: {form_data.get('message', '')}
         Website Name: {form_data.get('websiteName', '')}
@@ -95,17 +93,17 @@ def send_confirmation_email(form_data):
         sender_password = os.environ.get('SENDER_PASSWORD', 'your-app-password')
         recipient_email = form_data['email']
 
-        subject = "Your Website Application Has Been Received \u2728"
+        subject = "Your Website Application Has Been Received ✨"
         body = f"""
         Hi {form_data['firstName']},
 
         Thanks for applying to get your free website built by The Free Website Wizards!
 
-        We\u2019ve received your info and our team will begin reviewing it shortly. If we have any questions, we\u2019ll reach out directly. Otherwise, you\u2019ll hear from us soon with the next steps.
+        We’ve received your info and our team will begin reviewing it shortly. If we have any questions, we’ll reach out directly. Otherwise, you’ll hear from us soon with the next steps.
 
         In the meantime, feel free to check out examples of our work or share your business details with friends who might also benefit.
 
-        \u2728 Talk soon,
+        ✨ Talk soon,
         The Free Website Wizards
         https://thefreewebsitewizards.com
         """
@@ -127,36 +125,43 @@ def send_confirmation_email(form_data):
         print(f"Error sending confirmation email: {e}")
         return False
 
-# Wizard Form Handler
-@app.route('/submit-wizard', methods=['POST'])
-def submit_wizard_form():
+def handle_form_submission(sheet_name, recipient_email):
     try:
-        form_data = request.get_json()
-        form_data['timestamp'] = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
-        form_data['service'] = 'Free Website Wizard'
-        form_data['message'] = form_data.get('websiteDescription', '')
+        form_data = {
+            'firstName': request.form.get('firstName'),
+            'email': request.form.get('email'),
+            'phone': request.form.get('phone'),
+            'websiteName': request.form.get('websiteName'),
+            'websiteDescription': request.form.get('websiteDescription'),
+            'hasWebsite': request.form.get('hasWebsite'),
+            'timestamp': datetime.now().strftime('%Y-%m-%d %H:%M:%S'),
+            'service': 'Free Website Wizard',
+            'message': request.form.get('websiteDescription')
+        }
 
-        sheet = get_google_sheet("Website Submissions")
+        sheet = get_google_sheet(sheet_name)
         row = [
             form_data['timestamp'],
             form_data['firstName'],
             form_data['email'],
-            form_data['phone'],
+            form_data['phoneNumber'],
             form_data['hasWebsite'],
             form_data['websiteName'],
             form_data['websiteDescription']
         ]
         sheet.append_row(row)
 
-        send_notification_email(form_data, recipient="dylan@thefreewebsitewizards.com")
+        send_notification_email(form_data, recipient=recipient_email)
         send_confirmation_email(form_data)
 
         return jsonify({"status": "success"}), 200
     except Exception as e:
-        print(f"Wizard form error: {e}")
-        import traceback
-        traceback.print_exc()
+        print(f"{sheet_name} form error: {e}")
         return jsonify({"status": "error", "message": str(e)}), 500
+
+@app.route('/submit-wizard', methods=['POST'])
+def submit_wizard_form():
+    return handle_form_submission("Website Submissions", "dylan@thefreewebsitewizards.com")
 
 @app.route('/submit', methods=['POST'])
 def submit_contact_form():
@@ -197,7 +202,7 @@ def receive_sms():
         start_time=start_time
     )
 
-    send_sms(phone, "\u2705 Thanks! We've saved your info and booked your appointment.")
+    send_sms(phone, "✅ Thanks! We've saved your info and booked your appointment.")
     return jsonify({"status": "success", "responses": responses})
 
 if __name__ == '__main__':

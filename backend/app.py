@@ -1,6 +1,7 @@
 import os
 from datetime import datetime, timedelta
 from flask import Flask, request, jsonify, render_template, redirect, url_for, flash
+from flask_cors import CORS
 import gspread
 from oauth2client.service_account import ServiceAccountCredentials
 import smtplib
@@ -15,6 +16,8 @@ from backend.agent import AI_Sales_Agent
 
 app = Flask(__name__, template_folder=os.path.join(os.path.dirname(__file__), '..', 'templates'),
             static_folder=os.path.join(os.path.dirname(__file__), '..', 'static'))
+
+CORS(app, origins=["https://thefreewebsitewizards.com"])
 
 app.secret_key = os.environ.get('SECRET_KEY', 'your-secret-key-here')
 app.register_blueprint(website_bp)

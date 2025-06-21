@@ -8,6 +8,8 @@ import smtplib
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
 
+from dotenv import load_dotenv
+load_dotenv()
 from website import website_bp
 from backend.sms import send_sms
 from backend.database import insert_lead

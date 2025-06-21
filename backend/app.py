@@ -62,7 +62,7 @@ def send_notification_email(form_data, recipient="dylan@leadneedle.com"):
 
         Name: {form_data['firstName']} {form_data.get('lastName', '')}
         Email: {form_data['email']}
-        Phone: {form_data['phoneNumber']}
+        phoneNumber: {form_data['phoneNumber']}
         Service: {form_data.get('service', 'N/A')}
         Message: {form_data.get('message', '')}
         Website Name: {form_data.get('websiteName', '')}
@@ -130,7 +130,7 @@ def handle_form_submission(sheet_name, recipient_email):
         form_data = {
             'firstName': request.form.get('firstName'),
             'email': request.form.get('email'),
-            'phone': request.form.get('phone'),
+            'phoneNumber': request.form.get('phoneNumber'),
             'websiteName': request.form.get('websiteName'),
             'websiteDescription': request.form.get('websiteDescription'),
             'hasWebsite': request.form.get('hasWebsite'),

@@ -131,17 +131,11 @@ def send_confirmation_email(form_data):
 @app.route('/submit-wizard', methods=['POST'])
 def submit_wizard_form():
     try:
-        form_data = {
-            'firstName': request.form.get('firstName'),
-            'email': request.form.get('email'),
-            'phone': request.form.get('phone'),
-            'websiteName': request.form.get('websiteName'),
-            'websiteDescription': request.form.get('websiteDescription'),
-            'hasWebsite': request.form.get('hasWebsite'),
-            'timestamp': datetime.now().strftime('%Y-%m-%d %H:%M:%S'),
-            'service': 'Free Website Wizard',
-            'message': request.form.get('websiteDescription')
-        }
+        form_data = request.get_json(force=True)
+
+        form_data['timestamp'] = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+        form_data['service'] = 'Free Website Wizard'
+        form_data['message'] = form_data.get('websiteDescription', '')
 
         sheet = get_google_sheet("Website Submissions")
         row = [

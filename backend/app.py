@@ -20,7 +20,6 @@ app.secret_key = os.environ.get('SECRET_KEY', 'your-secret-key-here')
 app.register_blueprint(website_bp)
 
 # Google Sheets setup
-
 def get_google_sheet(sheet_name="Submissions"):
     import pickle
     from google.auth.transport.requests import Request
@@ -42,10 +41,9 @@ def get_google_sheet(sheet_name="Submissions"):
             raise Exception("No valid token found. Run manual_auth.py first.")
 
     client = gspread.authorize(creds)
-    return client.open_by_key("1QJ91JGh16v3g8JO4A-YUCLgfhIhADSNppw0NMWjSpP4").worksheet(sheet_name)
+    return client.open_by_key("1batVITcT526zxkc8Qdf0_AKbORnrLRB7-wHdDKhcm9M").worksheet(sheet_name)
 
 # Email notification function
-
 def send_notification_email(form_data, recipient="dylan@leadneedle.com"):
     try:
         smtp_server = "smtp.gmail.com"
@@ -61,11 +59,14 @@ def send_notification_email(form_data, recipient="dylan@leadneedle.com"):
         body = f"""
         New contact form submission received:
 
-        Name: {form_data['firstName']} {form_data['lastName']}
+        Name: {form_data['firstName']} {form_data.get('lastName', '')}
         Email: {form_data['email']}
         Phone: {form_data['phone']}
-        Service: {form_data['service']}
-        Message: {form_data['message']}
+        Service: {form_data.get('service', 'N/A')}
+        Message: {form_data.get('message', '')}
+        Website Name: {form_data.get('websiteName', '')}
+        Has Website: {form_data.get('hasWebsite', '')}
+        Website Description: {form_data.get('websiteDescription', '')}
 
         Submitted at: {form_data['timestamp']}
         """
@@ -83,49 +84,81 @@ def send_notification_email(form_data, recipient="dylan@leadneedle.com"):
         print(f"Error sending email: {e}")
         return False
 
-def handle_form_submission(sheet_name, recipient):
+def send_confirmation_email(form_data):
+    try:
+        smtp_server = "smtp.gmail.com"
+        smtp_port = 587
+        sender_email = os.environ.get('SENDER_EMAIL', 'your-email@gmail.com')
+        sender_password = os.environ.get('SENDER_PASSWORD', 'your-app-password')
+        recipient_email = form_data['email']
+
+        subject = "Your Website Application Has Been Received ✨"
+        body = f"""
+        Hi {form_data['firstName']},
+
+        Thanks for applying to get your free website built by The Free Website Wizards!
+
+        We’ve received your info and our team will begin reviewing it shortly. If we have any questions, we’ll reach out directly. Otherwise, you’ll hear from us soon with the next steps.
+
+        In the meantime, feel free to check out examples of our work or share your business details with friends who might also benefit.
+
+        ✨ Talk soon,
+        The Free Website Wizards
+        https://thefreewebsitewizards.com
+        """
+
+        msg = MIMEMultipart()
+        msg['From'] = sender_email
+        msg['To'] = recipient_email
+        msg['Subject'] = subject
+        msg.attach(MIMEText(body, 'plain'))
+
+        server = smtplib.SMTP(smtp_server, smtp_port)
+        server.starttls()
+        server.login(sender_email, sender_password)
+        server.sendmail(sender_email, recipient_email, msg.as_string())
+        server.quit()
+
+        return True
+    except Exception as e:
+        print(f"Error sending confirmation email: {e}")
+        return False
+
+# Wizard Form Handler
+@app.route('/submit-wizard', methods=['POST'])
+def submit_wizard_form():
     try:
         form_data = {
             'firstName': request.form.get('firstName'),
-            'lastName': request.form.get('lastName'),
             'email': request.form.get('email'),
             'phone': request.form.get('phone'),
-            'service': request.form.get('service'),
-            'message': request.form.get('message'),
-            'timestamp': datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+            'websiteName': request.form.get('websiteName'),
+            'websiteDescription': request.form.get('websiteDescription'),
+            'hasWebsite': request.form.get('hasWebsite'),
+            'timestamp': datetime.now().strftime('%Y-%m-%d %H:%M:%S'),
+            'service': 'Free Website Wizard',
+            'message': request.form.get('websiteDescription')
         }
 
-        required_fields = ['firstName', 'lastName', 'email', 'phone', 'service', 'message']
-        for field in required_fields:
-            if not form_data[field]:
-                flash(f'{field} is required', 'error')
-                return redirect(url_for('website_bp.home'))
-
-        sheet = get_google_sheet(sheet_name)
+        sheet = get_google_sheet("Website Submissions")
         row = [
             form_data['timestamp'],
             form_data['firstName'],
-            form_data['lastName'],
             form_data['email'],
             form_data['phone'],
-            form_data['service'],
-            form_data['message']
+            form_data['hasWebsite'],
+            form_data['websiteName'],
+            form_data['websiteDescription']
         ]
         sheet.append_row(row)
 
-        email_sent = send_notification_email(form_data, recipient=recipient)
-        if email_sent:
-            print(f"✅ Email sent to {recipient}")
-        else:
-            print(f"❌ Failed to send email to {recipient}")
+        send_notification_email(form_data, recipient="dylan@thefreewebsitewizards.com")
+        send_confirmation_email(form_data)
 
-        flash('Thank you for your message! We\'ll get back to you soon.', 'success')
-        return redirect(url_for('website_bp.home'))
-
+        return jsonify({"status": "success"}), 200
     except Exception as e:
-        print(f"Error processing form: {e}")
-        flash('There was an error submitting your form. Please try again.', 'error')
-        return redirect(url_for('website_bp.home'))
+        print(f"Wizard form error: {e}")
+        return jsonify({"status": "error", "message": str(e)}), 500
 
 @app.route('/submit', methods=['POST'])
 def submit_contact_form():
@@ -172,3 +205,6 @@ def receive_sms():
 if __name__ == '__main__':
     port = int(os.environ.get("PORT", 10000))
     app.run(host="0.0.0.0", port=port)
+
+
+# --- LINE END ---

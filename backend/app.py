@@ -153,9 +153,11 @@ def submit_wizard_form():
         send_confirmation_email(form_data)
 
         return jsonify({"status": "success"}), 200
-    except Exception as e:
-        print(f"Wizard form error: {e}")
-        return jsonify({"status": "error", "message": str(e)}), 500
+except Exception as e:
+    print(f"Wizard form error: {e}")
+    import traceback
+    traceback.print_exc()
+    return jsonify({"status": "error", "message": str(e)}), 500
 
 @app.route('/submit', methods=['POST'])
 def submit_contact_form():

@@ -95,17 +95,17 @@ def send_confirmation_email(form_data):
         sender_password = os.environ.get('SENDER_PASSWORD', 'your-app-password')
         recipient_email = form_data['email']
 
-        subject = "Your Website Application Has Been Received ✨"
+        subject = "Your Website Application Has Been Received \u2728"
         body = f"""
         Hi {form_data['firstName']},
 
         Thanks for applying to get your free website built by The Free Website Wizards!
 
-        We’ve received your info and our team will begin reviewing it shortly. If we have any questions, we’ll reach out directly. Otherwise, you’ll hear from us soon with the next steps.
+        We\u2019ve received your info and our team will begin reviewing it shortly. If we have any questions, we\u2019ll reach out directly. Otherwise, you\u2019ll hear from us soon with the next steps.
 
         In the meantime, feel free to check out examples of our work or share your business details with friends who might also benefit.
 
-        ✨ Talk soon,
+        \u2728 Talk soon,
         The Free Website Wizards
         https://thefreewebsitewizards.com
         """
@@ -131,8 +131,7 @@ def send_confirmation_email(form_data):
 @app.route('/submit-wizard', methods=['POST'])
 def submit_wizard_form():
     try:
-        form_data = request.get_json(force=True)
-
+        form_data = request.get_json()
         form_data['timestamp'] = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
         form_data['service'] = 'Free Website Wizard'
         form_data['message'] = form_data.get('websiteDescription', '')
@@ -153,11 +152,11 @@ def submit_wizard_form():
         send_confirmation_email(form_data)
 
         return jsonify({"status": "success"}), 200
-except Exception as e:
-    print(f"Wizard form error: {e}")
-    import traceback
-    traceback.print_exc()
-    return jsonify({"status": "error", "message": str(e)}), 500
+    except Exception as e:
+        print(f"Wizard form error: {e}")
+        import traceback
+        traceback.print_exc()
+        return jsonify({"status": "error", "message": str(e)}), 500
 
 @app.route('/submit', methods=['POST'])
 def submit_contact_form():
@@ -198,12 +197,9 @@ def receive_sms():
         start_time=start_time
     )
 
-    send_sms(phone, "✅ Thanks! We've saved your info and booked your appointment.")
+    send_sms(phone, "\u2705 Thanks! We've saved your info and booked your appointment.")
     return jsonify({"status": "success", "responses": responses})
 
 if __name__ == '__main__':
     port = int(os.environ.get("PORT", 10000))
     app.run(host="0.0.0.0", port=port)
-
-
-# --- LINE END ---
